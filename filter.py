@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 filename = 'data.csv'
-selected_columns = ['rally', 'ball_round', 'time', 'roundscore_A', 'roundscore_B', 'player', 'type', 'lose_reason', 'win_reason', 'getpoint_player', 'flaw', 'db']
+selected_columns = ['rally', 'ball_round', 'frame_num', 'roundscore_A', 'roundscore_B', 'player', 'lose_reason', 'getpoint_player']
 # NOTE: 有參考價值的欄位：rally, ball_round, time, roundscore_A, roundscore_B, player, type, lose_reason, win_reason, getpoint_player, flaw, db
 
 # columns_to_drop = ['']
