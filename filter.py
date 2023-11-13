@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 filename = 'data.csv'
-selected_columns = ['rally', 'ball_round', 'frame_num', 'roundscore_A', 'roundscore_B', 'player', 'lose_reason', 'getpoint_player']
+selected_columns = ['rally','frame_num','player', 'getpoint_player']
 # NOTE: 有參考價值的欄位：rally, ball_round, time, roundscore_A, roundscore_B, player, type, lose_reason, win_reason, getpoint_player, flaw, db
 
 # columns_to_drop = ['']
@@ -48,12 +48,33 @@ def segment(df):
     return new_df
 
 
-def switch(bool):
-    return not bool
+def rally_count(df):
+    # init
+    new_df = df.copy()
+    new_df.insert(0, 'rally_count', np.nan)
+
+    flag = False # 
+    rally_count = 1
+
+    for index, row in new_df.iterrows():
+        if flag :
+            rally_count += 1
+
+        new_df.at[index, 'rally_count'] = str(rally_count)
+        if index + 1 < len(df):
+            next_row = df.iloc[index + 1]  # 获取下一行
+            if not pd.isna(next_row['rally']):  # 如果rally_count有值 
+                if next_row['rally'] != row['rally']:
+                    flag = True # 切換回合 並在下次迴圈開始時寫入
+                else:
+                    flag = False
+
+    return new_df
+
 
 org_df = pd.read_csv(filename)
 new_df_with_extract_columns = extract_columns(org_df, selected_columns)
-segment_df = segment(new_df_with_extract_columns)
+segment_df = rally_count(new_df_with_extract_columns)
 save_to_csv(output_file, segment_df)
 
 # NOTE:
