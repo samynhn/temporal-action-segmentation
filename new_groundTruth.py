@@ -58,18 +58,16 @@ def write_actions_to_csv(setFiles_df_with_rally_count, rallySeg_df, total_frame_
         # 從 start_value 開始寫入數值，直到達到或超過 max_value
         i,j=0,0
         while current_frame_num <= total_frame_num:
-#WORKING_AREA:
+            #DONE:
+                #此時frame number < 第一個 RallySeg Start 的frame number : 設定為game start
+                #此時frame number > 最後一個 RallySeg Start 的frame number : 設定為game end
 
-#DONE:
-    #此時frame number < 第一個 RallySeg Start 的frame number : 設定為game start
-    #此時frame number > 最後一個 RallySeg Start 的frame number : 設定為game end
+            #TODO:
+                #set中的frame number >此時frame number > RallySeg Start 的frame number : 設定為rally start
+                #set中的frame number <此時frame number < RallySeg Start 的frame number : 設定為rally end
 
-#TODO:
-    #set中的frame number >此時frame number > RallySeg Start 的frame number : 設定為rally start
-    #set中的frame number <此時frame number < RallySeg Start 的frame number : 設定為rally end
-
-    #讀取set中的A,B player
-    #此時frame number 在RallySeg 範圍外 : 設定為Break
+                #讀取set中的A,B player
+                #此時frame number 在RallySeg 範圍外 : 設定為Break
             first_exit_rally = False #讓一開始沒進while 也不會進if   
             current_rally_num = i+1 #rallySeg_df的index=0開始 但是rally_count=1開始
             #找出目前rally中 第一個row 和 最後一個row
@@ -141,6 +139,5 @@ def __init__():
     # 使用範例
     write_actions_to_csv(setFiles_df_with_rally_count, rallySeg_df, total_frame_num, groundTruth_path)
 
-    
 if __name__ == "__main__":
     __init__()
