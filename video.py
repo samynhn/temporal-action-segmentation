@@ -2,7 +2,9 @@ import cv2
 import pandas as pd
 from tqdm import tqdm
 frame_count = 0
-videoPath = "data/Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4/Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4"
+game_name = 'Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4'
+videoPath = "data/"+game_name+"/" + game_name
+groundTruth_path = './'+game_name+'groundtruth.csv'
 
 def show_video_frames(video_path):
     # 打開影片
@@ -43,7 +45,7 @@ def show_video_frames(video_path):
 
 def save_video_with_frame_numbers(input_video_path, output_video_path):
 
-    df = pd.read_csv('groundtruth.csv', header=None)
+    df = pd.read_csv(groundTruth_path, header=None)
     # 打開影片
     cap = cv2.VideoCapture(input_video_path)
 
@@ -78,7 +80,6 @@ def save_video_with_frame_numbers(input_video_path, output_video_path):
         else:
             action_name = None
 
-
         # 將幀數顯示在畫面上
         cv2.putText(frame, f'Frame: {frame_count}', (10, 30), 
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
@@ -106,6 +107,7 @@ def save_video_with_frame_numbers(input_video_path, output_video_path):
 
 def get_total_frames(video_path):
     # 打開影片檔案
+    print(video_path)
     cap = cv2.VideoCapture(video_path)
 
     if not cap.isOpened():
@@ -152,8 +154,9 @@ def get_percentage_of_each_action():
     print("break: " , break_/len(df)*100 , "%")
 
 def __init__():
-    get_percentage_of_each_action()
+    # get_percentage_of_each_action()
 
-    # save_video_with_frame_numbers(videoPath, 'result/full.mp4')
+    save_video_with_frame_numbers(videoPath, 'result/'+game_name+'.mp4')
 # 使用範例
-__init__()
+if __name__ == '__main__':
+    __init__()
