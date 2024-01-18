@@ -43,7 +43,12 @@ def rally_count(df):
 
     return new_df
 
-def write_actions_to_csv(current_frame_num, total_frame_num, file_name):
+def write_actions_to_csv(setFiles_df_with_rally_count, rallySeg_df, total_frame_num, file_name, current_frame_num=1):
+    pbar = tqdm(total=total_frame_num)
+    first_frame = rallySeg_df.iloc[0]["Start"]
+    last_frame = rallySeg_df.iloc[-1]["End"]
+
+
     with open(file_name, mode='w', newline='') as file:
         writer = csv.writer(file)
         
@@ -120,6 +125,7 @@ def write_actions_to_csv(current_frame_num, total_frame_num, file_name):
                     first_exit_rally = False
                     current_frame_num += 1 
                     pbar.update(1)
+    pbar.close()
 
 def __init__():
 # setFiles_df, rallySeg_df
@@ -128,19 +134,13 @@ def __init__():
     setFiles_df_with_rally_count = rally_count(setFiles_df)
     rallySeg_df = pd.read_csv(os.path.join(base_path, rallySeg_name))
 
-    first_frame = rallySeg_df.iloc[0]["Start"]
-    last_frame = rallySeg_df.iloc[-1]["End"]
-
-
     # setFiles_df_with_rally_count.to_csv('new_df.csv', index=False) #新增rally_count欄位 用於後續判斷是否在rally範圍內
 
     total_frame_num = video.get_total_frames(video.videoPath)
-    pbar = tqdm(total=total_frame_num)
-
+    
     # 使用範例
-    write_actions_to_csv(1, total_frame_num, groundTruth_path)
+    write_actions_to_csv(setFiles_df_with_rally_count, rallySeg_df, total_frame_num, groundTruth_path)
 
-    pbar.close()
-
+    
 if __name__ == "__main__":
     __init__()
