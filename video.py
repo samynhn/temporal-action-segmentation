@@ -4,7 +4,7 @@ from tqdm import tqdm
 frame_count = 0
 game_name = 'Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4'
 videoPath = "data/"+game_name+"/" + game_name
-groundTruth_path = './'+game_name+'groundtruth.csv'
+groundTruth_path = './'+"processed_Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4groundtruth.csv"
 
 def show_video_frames(video_path):
     # 打開影片
@@ -42,8 +42,7 @@ def show_video_frames(video_path):
     cv2.destroyAllWindows()
     # print(frame_count)
 
-
-def save_video_with_frame_numbers(input_video_path, output_video_path):
+def save_video(input_video_path, output_video_path, cut=False, putText=True):
 
     df = pd.read_csv(groundTruth_path, header=None)
     # 打開影片
@@ -65,7 +64,12 @@ def save_video_with_frame_numbers(input_video_path, output_video_path):
     # frame_count = 10452
     global frame_count
     total_frames = get_total_frames(input_video_path)
-    pbar = tqdm(total=total_frames, desc="Processing Video")  # 初始化進度條
+
+    if cut == True:#如果要切割影片 就用groundTruth csv的長度當作進度條
+        pbar = tqdm(total=len(df), desc="Processing Video")  # 初始化進度條 
+    else:
+        pbar = tqdm(total=total_frames, desc="Processing Video")  # 初始化進度條pbar = tqdm(total=len(df), desc="Processing Video")
+
     while True:
         # 讀取下一幀
         ret, frame = cap.read()
@@ -73,19 +77,22 @@ def save_video_with_frame_numbers(input_video_path, output_video_path):
         # 檢查是否成功讀取
         if not ret:
             break
-
         frame_count += 1
         if frame_count < len(df):
             action_name = df.loc[frame_count].item()
         else:
-            action_name = None
+            if cut ==True:
+                break
+            else:
+                action_name = None
 
         # 將幀數顯示在畫面上
-        cv2.putText(frame, f'Frame: {frame_count}', (10, 30), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
-        
-        cv2.putText(frame, f'Action: {action_name}', (10, 60), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        if putText == True:
+            cv2.putText(frame, f'Frame: {frame_count}', (10, 30), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+            
+            cv2.putText(frame, f'Action: {action_name}', (10, 60), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
         # 寫入幀到輸出文件
         out.write(frame)
@@ -103,7 +110,6 @@ def save_video_with_frame_numbers(input_video_path, output_video_path):
     cap.release()
     out.release()
     cv2.destroyAllWindows()
-
 
 def get_total_frames(video_path):
     # 打開影片檔案
@@ -155,8 +161,7 @@ def get_percentage_of_each_action():
 
 def __init__():
     # get_percentage_of_each_action()
-
-    save_video_with_frame_numbers(videoPath, 'result/'+game_name+'.mp4')
+    save_video(videoPath, 'result/'+game_name+'.mp4', cut=True, putText=False)
 # 使用範例
 if __name__ == '__main__':
     __init__()
