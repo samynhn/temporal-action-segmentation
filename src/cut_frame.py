@@ -1,13 +1,17 @@
 import csv
-file_csv = 'Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4groundtruth.csv'
-remained_lines = 15000
-target = "break"
+from pathlib import Path
+import sys
 
-def process_csv(file_path):
+FILE = Path(__file__).resolve()
+ROOT = Path(FILE.parents[1]) #get root path ./TAS 
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  
+
+def cut_groundTruth(file_path, remained_lines, save_path, target="break"):
     with open(file_path, 'r', newline='', encoding='utf-8') as file:
         reader = list(csv.reader(file))
 
-        if len(reader) < 15000:
+        if len(reader) < remained_lines:
             print("lines less than 15000.")
             return
 
@@ -33,8 +37,16 @@ def process_csv(file_path):
             new_content = reader[:nearest_index]
 
         # 寫入新檔案
-        with open('processed_' + file_path, 'w', newline='', encoding='utf-8') as new_file:
+        with open(save_path, 'w', newline='', encoding='utf-8') as new_file:
             writer = csv.writer(new_file)
             writer.writerows(new_content)
 
-process_csv(file_csv)
+if __name__ == "__main__":
+
+    game_name = 'Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4'
+    groundTruth_path = str(ROOT)+'/result/groundTruth/'+game_name+'_groundtruth.csv'
+    cut_groundTruth_path = str(ROOT)+'/result/groundTruth/'+game_name+'_cut_groundtruth.csv'
+    remained_lines = 15000
+    target = "break"
+    cut_groundTruth(groundTruth_path, remained_lines, cut_groundTruth_path)
+

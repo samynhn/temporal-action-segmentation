@@ -1,21 +1,20 @@
-#NOTE: change actions = ["game_start", "game_end", "rally_start", "rally_end", "playerA", "playerB", "break"] to actions = ["rally_start", "rally_end", "playerA", "playerB", "break"]
 import pandas as pd
 import numpy as np
 import os
 import cv2
 import csv
-import video # video.py
 from tqdm import tqdm
-game_name = 'Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4'
-base_path = './data/'+game_name+'/'
-actions = ["break", "break", "rally_start", "rally_end", "playerA", "playerB", "break"]
-groundTruth_path = './'+game_name+'groundtruth.csv'
+from pathlib import Path
+import sys
 
-frame_count = 0
-#get path
-setFile_names = ['label/set1.csv', 'label/set2.csv', 'label/set3.csv']
-rallySeg_name = "RallySeg.csv"
-setFiles_path = [os.path.join(base_path, setFile_name) for setFile_name in setFile_names]
+FILE = Path(__file__).resolve()
+ROOT = Path(FILE.parents[1]) #get root path ./TAS 
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  
+
+from src import video
+#NOTE: change actions = ["game_start", "game_end", "rally_start", "rally_end", "playerA", "playerB", "break"] to actions = ["rally_start", "rally_end", "playerA", "playerB", "break"]
+
 
 def merge_setFiles(files):
     return pd.concat((pd.read_csv(file) for file in files), ignore_index=True)
@@ -43,7 +42,7 @@ def rally_count(df):
 
     return new_df
 
-def write_actions_to_csv(setFiles_df_with_rally_count, rallySeg_df, total_frame_num, file_name, current_frame_num=1):
+def write_actions_to_csv(setFiles_df_with_rally_count, rallySeg_df, total_frame_num, file_name, actions, current_frame_num=1):
     pbar = tqdm(total=total_frame_num)
     first_frame = rallySeg_df.iloc[0]["Start"]
     last_frame = rallySeg_df.iloc[-1]["End"]
@@ -125,7 +124,7 @@ def write_actions_to_csv(setFiles_df_with_rally_count, rallySeg_df, total_frame_
                     pbar.update(1)
     pbar.close()
 
-def __init__():
+def get_groundTruth(setFiles_path, base_path, groundTruth_path, video_path, rallySeg_name, actions):
 # setFiles_df, rallySeg_df
     setFiles_df = merge_setFiles(setFiles_path)
 
@@ -134,10 +133,20 @@ def __init__():
 
     # setFiles_df_with_rally_count.to_csv('new_df.csv', index=False) #新增rally_count欄位 用於後續判斷是否在rally範圍內
 
-    total_frame_num = video.get_total_frames(video.videoPath)
+    total_frame_num = video.get_total_frames(video_path)
     
     # 使用範例
-    write_actions_to_csv(setFiles_df_with_rally_count, rallySeg_df, total_frame_num, groundTruth_path)
+    write_actions_to_csv(setFiles_df_with_rally_count, rallySeg_df, total_frame_num, groundTruth_path,actions)
 
 if __name__ == "__main__":
-    __init__()
+    #get path
+    game_name = 'Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4'
+    rallySeg_name = "RallySeg.csv"
+    game_base_path = str(ROOT)+'/data/'+game_name+'/'
+    groundTruth_path = str(ROOT)+'/result/groundTruth/'+game_name+'_groundtruth.csv'
+    videoPath = game_base_path + game_name
+    setFile_names = ['label/set1.csv', 'label/set2.csv', 'label/set3.csv']
+    setFiles_path = [os.path.join(game_base_path, setFile_name) for setFile_name in setFile_names]
+    actions = ["break", "break", "rally_start", "rally_end", "playerA", "playerB", "break"]
+
+    get_groundTruth(setFiles_path, game_base_path, groundTruth_path, videoPath, rallySeg_name, actions)

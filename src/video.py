@@ -1,10 +1,13 @@
 import cv2
 import pandas as pd
 from tqdm import tqdm
-frame_count = 0
-game_name = 'Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4'
-videoPath = "data/"+game_name+"/" + game_name
-groundTruth_path = './'+"processed_Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4groundtruth.csv"
+from pathlib import Path
+import sys
+
+FILE = Path(__file__).resolve()
+ROOT = Path(FILE.parents[1]) #get root path ./TAS 
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  
 
 def show_video_frames(video_path):
     # 打開影片
@@ -14,7 +17,7 @@ def show_video_frames(video_path):
         print("Error: Could not open video.")
         return
 
-    global frame_count
+    frame_count = 0
 
     while True:
         # 讀取下一幀
@@ -40,9 +43,8 @@ def show_video_frames(video_path):
     # 釋放攝影機資源並關閉視窗
     cap.release()
     cv2.destroyAllWindows()
-    # print(frame_count)
 
-def save_video(input_video_path, output_video_path, cut=False, putText=True):
+def save_video(input_video_path, groundTruth_path, output_video_path, cut=False, putText=True):
 
     df = pd.read_csv(groundTruth_path, header=None)
     # 打開影片
@@ -62,7 +64,7 @@ def save_video(input_video_path, output_video_path, cut=False, putText=True):
     out = cv2.VideoWriter(output_video_path, fourcc, fps, (frame_width, frame_height))
 
     # frame_count = 10452
-    global frame_count
+    frame_count = 0 
     total_frames = get_total_frames(input_video_path)
 
     if cut == True:#如果要切割影片 就用groundTruth csv的長度當作進度條
@@ -159,9 +161,12 @@ def get_percentage_of_each_action():
     print("playerB: " , playerB/len(df)*100 , "%")
     print("break: " , break_/len(df)*100 , "%")
 
-def __init__():
-    # get_percentage_of_each_action()
-    save_video(videoPath, 'result/'+game_name+'.mp4', cut=True, putText=False)
 # 使用範例
 if __name__ == '__main__':
-    __init__()
+    frame_count = 0
+    game_name = 'Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4'
+    game_base_path = str(ROOT)+'/data/'+game_name+'/'
+    videoPath = game_base_path + game_name
+    groundTruth_path = str(ROOT)+'/result/groundTruth/'+game_name+'_groundtruth.csv'
+    output_video_path = str(ROOT)+'/result/video/'+game_name
+    save_video(videoPath, groundTruth_path, output_video_path, cut=True, putText=False)
