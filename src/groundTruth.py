@@ -1,11 +1,11 @@
+from pathlib import Path
+from tqdm import tqdm
 import pandas as pd
 import numpy as np
-import os
 import cv2
 import csv
-from tqdm import tqdm
-from pathlib import Path
 import sys
+import os
 
 FILE = Path(__file__).resolve()
 ROOT = Path(FILE.parents[1]) #get root path ./TAS 
@@ -127,15 +127,10 @@ def write_actions_to_csv(setFiles_df_with_rally_count, rallySeg_df, total_frame_
 def get_groundTruth(setFiles_path, base_path, groundTruth_path, video_path, rallySeg_name, actions):
 # setFiles_df, rallySeg_df
     setFiles_df = merge_setFiles(setFiles_path)
-
     setFiles_df_with_rally_count = rally_count(setFiles_df)
     rallySeg_df = pd.read_csv(os.path.join(base_path, rallySeg_name))
-
     # setFiles_df_with_rally_count.to_csv('new_df.csv', index=False) #新增rally_count欄位 用於後續判斷是否在rally範圍內
-
     total_frame_num = video.get_total_frames(video_path)
-    
-    # 使用範例
     write_actions_to_csv(setFiles_df_with_rally_count, rallySeg_df, total_frame_num, groundTruth_path,actions)
 
 if __name__ == "__main__":

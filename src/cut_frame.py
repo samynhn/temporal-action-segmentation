@@ -1,5 +1,5 @@
-import csv
 from pathlib import Path
+import csv
 import sys
 
 FILE = Path(__file__).resolve()

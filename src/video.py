@@ -1,7 +1,7 @@
-import cv2
-import pandas as pd
-from tqdm import tqdm
 from pathlib import Path
+from tqdm import tqdm
+import pandas as pd
+import cv2
 import sys
 
 FILE = Path(__file__).resolve()
@@ -115,7 +115,6 @@ def save_video(input_video_path, groundTruth_path, output_video_path, cut=False,
 
 def get_total_frames(video_path):
     # 打開影片檔案
-    print(video_path)
     cap = cv2.VideoCapture(video_path)
 
     if not cap.isOpened():

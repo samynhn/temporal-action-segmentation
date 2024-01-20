@@ -1,7 +1,8 @@
+from pathlib import Path
+import logging
+import json
 import sys
 import os
-import json
-from pathlib import Path
 
 FILE = Path(__file__).resolve()
 ROOT = Path(FILE.parents[0]) #get root path ./TAS 
@@ -39,6 +40,11 @@ if __name__ == "__main__":
         output_video_path = str(ROOT)+'/result/video/'+str(remained_lines)+'_'+game_name
         cut_groundTruth_path = str(ROOT)+'/result/groundTruth/'+str(remained_lines)+'_cut_groundTruth_'+game_name+'.csv'
 
+        logging.info("Start getting groundTruth: {}".format(game_name))
         groundTruth.get_groundTruth(setFiles_path, game_base_path, groundTruth_path, videoPath, rallySeg_name, actions)
+
+        logging.info("Start cutting groundTruth: {}".format(game_name))
         cut_frame.cut_groundTruth(groundTruth_path, remained_lines, cut_groundTruth_path, target)
+
+        logging.info("Start saving video: {}".format(game_name))
         video.save_video(videoPath, cut_groundTruth_path, output_video_path, cut=True, putText=True)
