@@ -33,7 +33,7 @@ def cut_groundTruth(file_path, remained_lines, save_path, target="break"):
             else:
                 nearest_index = lower_index
                 print("nearest index is lower_index: ", lower_index+1)
-                print(reader[lower_index][0]+1)
+                print(reader[lower_index][0])
             new_content = reader[:nearest_index]
 
         # 寫入新檔案

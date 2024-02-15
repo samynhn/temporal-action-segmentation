@@ -135,12 +135,18 @@ def get_groundTruth(setFiles_path, base_path, groundTruth_path, video_path, rall
 
 if __name__ == "__main__":
     #get path
-    game_name = 'Kento_MOMOTA_CHOU_Tien_Chen_Fuzhou_Open_2019_Finals.mp4'
+    game_name = 'Akane_YAMAGUCHI_Ratchanok_INTANON_Canada_Open_2023_F.mp4'
     rallySeg_name = "RallySeg.csv"
     game_base_path = str(ROOT)+'/data/'+game_name+'/'
     groundTruth_path = str(ROOT)+'/result/groundTruth/'+game_name+'_groundtruth.csv'
     videoPath = game_base_path + game_name
-    setFile_names = ['label/set1.csv', 'label/set2.csv', 'label/set3.csv']
+
+    setFile_names =['label/set1.csv', 'label/set2.csv', 'label/set3.csv']
+    for setFile_name in setFile_names:
+        setFile_path = os.path.join(game_base_path, setFile_name)
+        if not os.path.exists(setFile_path):
+            setFile_names.remove(setFile_name)
+
     setFiles_path = [os.path.join(game_base_path, setFile_name) for setFile_name in setFile_names]
     actions = ["break", "break", "rally_start", "rally_end", "playerA", "playerB", "break"]
 

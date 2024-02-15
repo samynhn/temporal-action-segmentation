@@ -80,7 +80,7 @@ def save_video(input_video_path, groundTruth_path, output_video_path, cut=False,
         if not ret:
             break
         frame_count += 1
-        if frame_count < len(df):
+        if frame_count <= len(df):
             action_name = df.loc[frame_count].item()
         else:
             if cut ==True:

@@ -9,6 +9,8 @@ ROOT = Path(FILE.parents[0]) #get root path ./TAS
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  
 
+logging.basicConfig(level=logging.INFO)
+
 import src.groundTruth as groundTruth # groundTruth.py
 import src.cut_frame as cut_frame # cut_frame.py
 import src.video as video # video.py
@@ -47,4 +49,4 @@ if __name__ == "__main__":
         cut_frame.cut_groundTruth(groundTruth_path, remained_lines, cut_groundTruth_path, target)
 
         logging.info("Start saving video: {}".format(game_name))
-        video.save_video(videoPath, cut_groundTruth_path, output_video_path, cut=True, putText=True)
+        video.save_video(videoPath, cut_groundTruth_path, output_video_path, cut=True, putText=False)
